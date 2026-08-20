@@ -1,0 +1,89 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostPreview from "@/components/blog/PostPreview.astro";
+import Note from "@/components/note/Note.astro";
+import SocialList from "@/components/SocialList.astro";
+import { getAllPosts } from "@/data/post";
+import PageLayout from "@/layouts/Base.astro";
+import { collectionDateSort } from "@/utils/date";
+
+// Posts
+const MAX_POSTS = 10;
+const allPosts = await getAllPosts();
+const allPostsByDate = allPosts.sort(collectionDateSort) as CollectionEntry<"post">[];
+const latestPosts = allPostsByDate.slice(0, MAX_POSTS);
+
+// Pinned Posts, set to a max of 3;
+const MAX_PINNED_POSTS = 3;
+const pinnedPosts = allPostsByDate
+	.values()
+	.filter((p) => p.data.pinned)
+	.take(MAX_PINNED_POSTS)
+	.toArray();
+
+// Notes, set to a max of 2
+const MAX_NOTES = 2;
+const allNotes = await getCollection("note");
+const latestNotes = allNotes
+	.sort(collectionDateSort)
+	.slice(0, MAX_NOTES) as CollectionEntry<"note">[];
+
+// 首页介绍关键词链接:链接蓝文字 + Orange 绿加粗下划线 + 间距
+const kwClass =
+	"text-link mx-1.5 underline decoration-[#44d62c] decoration-2 underline-offset-4";
+---
+
+<PageLayout meta={{ title: "Home" }}>
+	<section>
+		<p class="text-[oklch(63%_0.19_48)] mb-4">
+			I'm curious about how things work under the hood — and how they hold up.
+			<a class={kwClass} href="/posts/">Web security</a>,
+			<a class={kwClass} href="/categories/CTF/">CTF write-ups</a>, and
+			<a class={kwClass} href="/notes/">side notes</a>
+			from wherever my brain wanders.
+		</p>
+		<SocialList />
+	</section>
+	{
+		pinnedPosts.length > 0 && (
+			<section class="mt-16">
+				<h2 class="section-heading mb-6">Pinned Posts</h2>
+				<ul class="space-y-1.5" role="list">
+					{pinnedPosts.map((p) => (
+						<li class="grid gap-0.5 py-1.5 first:pt-0 sm:grid-cols-[auto_1fr]">
+							<PostPreview post={p} />
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+	<section class="mt-16">
+		<h2 class="section-heading mb-6"><a href="/posts/">Posts</a></h2>
+		<ul class="space-y-1.5" role="list">
+			{
+				latestPosts.map((p) => (
+					<li class="grid gap-0.5 py-1.5 first:pt-0 sm:grid-cols-[auto_1fr]">
+						<PostPreview post={p} />
+					</li>
+				))
+			}
+		</ul>
+	</section>
+	{
+		latestNotes.length > 0 && (
+			<section class="mt-16">
+				<h2 class="section-heading mb-6">
+					<a href="/notes/">Notes</a>
+				</h2>
+				<ul class="space-y-3" role="list">
+					{latestNotes.map((note) => (
+						<li>
+							<Note note={note} as="h3" isPreview />
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+</PageLayout>

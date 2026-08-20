@@ -1,0 +1,22 @@
+---
+import type { MarkdownHeading } from "astro";
+import { generateToc } from "@/utils/generateToc";
+import TOCHeading from "./TOCHeading.astro";
+
+interface Props {
+	headings: MarkdownHeading[];
+}
+
+const { headings } = Astro.props;
+
+const toc = generateToc(headings);
+---
+
+<details open class="border-amber/30 xl:sticky xl:top-12 xl:order-2 xl:self-start xl:w-68 xl:border-s xl:ps-4">
+	<summary class="section-heading hover:marker:text-amber cursor-pointer">Table of Contents</summary>
+	<nav class="ms-4 xl:w-full">
+		<ol class="mt-4">
+			{toc.map((heading) => <TOCHeading heading={heading} />)}
+		</ol>
+	</nav>
+</details>

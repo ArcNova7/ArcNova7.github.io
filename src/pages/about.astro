@@ -1,0 +1,92 @@
+---
+import PageLayout from "@/layouts/Base.astro";
+
+const meta = {
+	description: "ArcNova — a passionate Security Researcher",
+	title: "About",
+};
+
+// DummyKitty 风格：emoji 短句列表，内容保持抽象宽泛
+const facts = [
+	"💻 Web Security",
+	"🛡️ System Security",
+	"🔍 Code Audit & Vulnerability Research",
+	"🚩 CTF Player",
+	"🌌 Exploring the unknown, one bug at a time",
+];
+
+// badge 风格徽章：品牌色底 + 白字 + simpleicons 品牌图标（无对应图标的条目留空 slug）
+const groups = [
+	{
+		label: "Env",
+		items: [
+			{ color: "#557C94", icon: "kalilinux", name: "Kali Linux" },
+			{ color: "#2496ED", icon: "docker", name: "Docker" },
+			{ color: "#E95420", icon: "ubuntu", name: "Ubuntu" },
+			{ color: "#0078D6", icon: "", name: "Windows" },
+		],
+	},
+	{
+		label: "Tools",
+		items: [
+			{ color: "#FF6633", icon: "burpsuite", name: "Burp Suite" },
+			{ color: "#20405F", icon: "", name: "Nmap" },
+			{ color: "#1679A7", icon: "wireshark", name: "Wireshark" },
+			{ color: "#46647E", icon: "", name: "Ghidra" },
+			{ color: "#2B2B2B", icon: "", name: "IDA Pro" },
+			{ color: "#45526E", icon: "", name: "sqlmap" },
+		],
+	},
+	{
+		label: "Languages",
+		items: [
+			{ color: "#ED8B00", icon: "openjdk", name: "Java" },
+			{ color: "#777BB4", icon: "php", name: "PHP" },
+			{ color: "#3776AB", icon: "python", name: "Python" },
+			{ color: "#00ADD8", icon: "go", name: "Go" },
+			{ color: "#512BD4", icon: "", name: "C#" },
+		],
+	},
+];
+---
+
+<PageLayout meta={meta}>
+	<div class="mx-auto max-w-2xl">
+		<h1 class="title mb-2">ArcNova</h1>
+		<p class="text-muted mb-5">A passionate Security Researcher</p>
+		<ul class="mb-8 list-none space-y-1.5" role="list">
+			{
+				facts.map((fact) => (
+					<li>{fact}</li>
+				))
+			}
+		</ul>
+
+		{
+			groups.map((group) => (
+				<section class="mb-7">
+					<h2 class="section-heading mb-3">{group.label}</h2>
+					<div class="flex flex-wrap gap-2">
+						{group.items.map((item) => (
+							<span
+								class="inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-semibold text-white"
+								style={`background-color: ${item.color}`}
+							>
+								{item.icon && (
+									<img
+										alt=""
+										class="h-4 w-4"
+										loading="lazy"
+										onerror="this.style.display='none'"
+										src={`https://cdn.simpleicons.org/${item.icon}/ffffff`}
+									/>
+								)}
+								{item.name}
+							</span>
+						))}
+					</div>
+				</section>
+			))
+		}
+	</div>
+</PageLayout>

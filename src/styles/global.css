@@ -1,0 +1,205 @@
+@layer theme, base, pagefind, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* tailwind to ignore satori generated og-image */
+@source not "../pages/og-image";
+/* config for tailwindcss-typography plugin */
+@config "../../tailwind.config.ts";
+
+/* register custom colour properties */
+@property --color-global-bg {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(98.5% 0.003 270);
+}
+@property --color-global-text {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(25% 0.025 270);
+}
+@property --color-muted {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(50% 0.025 270);
+}
+@property --color-link {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(42% 0.1 270);
+}
+@property --color-accent {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(42% 0.1 270);
+}
+@property --color-accent-2 {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(28% 0.07 270);
+}
+@property --color-quote {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(38% 0.055 270);
+}
+@property --color-amber {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(52% 0.12 75);
+}
+@property --color-coral {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(56% 0.16 30);
+}
+@property --color-amber-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(97% 0.025 82);
+}
+@property --color-coral-surface {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(97% 0.02 28);
+}
+@property --color-border {
+	syntax: "<color>";
+	inherits: true;
+	initial-value: oklch(90% 0.01 270);
+}
+
+@theme {
+	--color-global-bg: oklch(98.5% 0.003 270);
+	--color-global-text: oklch(25% 0.025 270);
+	--color-muted: oklch(50% 0.025 270);
+	--color-link: oklch(42% 0.1 270);
+	--color-accent: oklch(42% 0.1 270);
+	--color-accent-2: oklch(28% 0.07 270);
+	--color-quote: oklch(38% 0.055 270);
+	--color-amber: oklch(52% 0.12 75);
+	--color-coral: oklch(56% 0.16 30);
+	--color-amber-surface: oklch(97% 0.025 82);
+	--color-coral-surface: oklch(97% 0.02 28);
+	--color-border: oklch(90% 0.01 270);
+}
+
+@layer base {
+	html {
+		color-scheme: light;
+		accent-color: var(--color-accent);
+		scrollbar-gutter: stable;
+	}
+
+	:target {
+		scroll-margin-block: 5ex;
+	}
+
+	body {
+		font-family:
+			"Source Sans 3", "Noto Sans SC", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+			"Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+	}
+
+	@view-transition {
+		navigation: auto;
+	}
+
+	/* Astro image responsive styles, modified from -> https://docs.astro.build/en/guides/images/#responsive-image-styles */
+	:where([data-astro-image]) {
+		object-fit: var(--fit);
+		object-position: var(--pos);
+	}
+	[data-astro-image="full-width"] {
+		width: 100%;
+	}
+	[data-astro-image="constrained"] {
+		max-width: 100%;
+	}
+}
+
+@layer components {
+	@import "./components/admonition.css";
+	@import "./components/github-card.css";
+
+	.cactus-link {
+		@apply decoration-accent/35 hover:decoration-link underline underline-offset-4 hover:decoration-2;
+	}
+
+	.title {
+		@apply text-accent-2 text-2xl font-bold tracking-tight;
+	}
+
+	.article-title {
+		@apply border-coral border-s-4 ps-4;
+	}
+
+	.section-heading {
+		@apply border-amber text-accent-2 border-s-3 ps-3 text-lg font-bold tracking-tight;
+	}
+
+	.signal-tag {
+		@apply bg-amber-surface text-amber inline-flex items-center rounded-sm border border-amber/20 px-2 py-0.5 text-xs font-semibold tracking-wide;
+	}
+
+	.article-content :where(pre, table) {
+		max-width: 100%;
+		overflow-x: auto;
+	}
+
+	.article-content :where(h2) {
+		border-inline-start: 3px solid var(--color-amber);
+		padding-inline-start: 0.75rem;
+	}
+
+	.article-content :where(h3) {
+		color: var(--color-accent);
+	}
+
+	.article-content :where(table) {
+		display: block;
+		width: max-content;
+		min-width: 100%;
+	}
+
+	.article-content :where(div[style*="overflow-x"]) {
+		background: #f3f5fa !important;
+		border-color: var(--color-border) !important;
+		border-radius: 0.375rem !important;
+		box-shadow: none;
+	}
+
+	.article-content :where(div[style*="overflow-x"] pre) {
+		background: transparent !important;
+		color: var(--color-global-text) !important;
+	}
+
+	.article-content .expressive-code {
+		--ec-brdCol: var(--color-border);
+		--ec-codeBg: #f3f5fa;
+		--ec-codeFg: #24292f;
+		background: #f3f5fa;
+	}
+
+	.article-content .expressive-code pre {
+		background: #f3f5fa !important;
+	}
+
+	.article-content .expressive-code .frame.is-terminal .header {
+		display: none;
+	}
+}
+
+@utility prose {
+	--tw-prose-body: var(--color-global-text);
+	--tw-prose-bold: var(--color-global-text);
+	--tw-prose-bullets: var(--color-global-text);
+	--tw-prose-code: var(--color-global-text);
+	--tw-prose-headings: var(--color-accent-2);
+	--tw-prose-hr: 1px solid var(--color-border);
+	--tw-prose-links: var(--color-link);
+	--tw-prose-quotes: var(--color-quote);
+	--tw-prose-th-borders: var(--color-border);
+}
